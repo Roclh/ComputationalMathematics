@@ -10,6 +10,7 @@ import math.rows.HalvesTableRow;
 import org.apache.commons.math3.util.FastMath;
 
 //-2.7x^3-1.48x^2+19.23x+6.35
+// 2.74x^3-1.93x^2-15.28x-3.72
 
 
 public class NumericalSolutionOfNonlinearEquationsLogics {

@@ -13,6 +13,8 @@ import javafx.scene.text.Font;
 import math.FormulaInterpreter;
 import math.NumericalSolutionOfNonlinearEquationsLogics;
 import math.enums.NumericalSolutionOfNonlinearEquationsMethods;
+import nodes.FormulaInput;
+import services.History;
 
 import java.util.ArrayList;
 
@@ -25,10 +27,7 @@ public class NumericalSolutionOfNonlinearEquations extends Command {
     public ArrayList<Node> getNodes() {
         ArrayList<Node> nodes = new ArrayList<>();
         Font font = new Font("Helvetica", 18);
-        TextField formulaInput = new TextField();
-        formulaInput.setFont(font);
-        formulaInput.setMinWidth(500d);
-        formulaInput.setPromptText("Введите функцию, которую необходимо рассчитать");
+        FormulaInput formulaInput = new FormulaInput(new History("NumericalSolution.txt"));
         TextField minValueInput = new TextField();
         minValueInput.setFont(font);
         minValueInput.setMaxWidth(50d);
@@ -55,21 +54,23 @@ public class NumericalSolutionOfNonlinearEquations extends Command {
             }
             if (accuracyInput.getText().isEmpty()) {
                 flowPane.getChildren().add(NumericalSolutionOfNonlinearEquationsLogics.solve(
-                        formulaInput.getText(),
+                        formulaInput.getValue(),
                         Double.parseDouble(minValueInput.getText()),
                         Double.parseDouble(maxValueInput.getText()),
                         cbxMethods.getValue()
                 ));
-                chart.getData().add(FormulaInterpreter.getChartData(formulaInput.getText(), Double.parseDouble(minValueInput.getText()), Double.parseDouble(maxValueInput.getText())));
             } else {
                 flowPane.getChildren().add(NumericalSolutionOfNonlinearEquationsLogics.solve(
-                        formulaInput.getText(),
+                        formulaInput.getValue(),
                         Double.parseDouble(minValueInput.getText()),
                         Double.parseDouble(maxValueInput.getText()),
                         Double.parseDouble(accuracyInput.getText()),
                         cbxMethods.getValue()
                 ));
-                chart.getData().add(FormulaInterpreter.getChartData(formulaInput.getText(), Double.parseDouble(minValueInput.getText()), Double.parseDouble(maxValueInput.getText())));
+            }
+            chart.getData().add(FormulaInterpreter.getChartData(formulaInput.getValue(), Double.parseDouble(minValueInput.getText()), Double.parseDouble(maxValueInput.getText())));
+            if(formulaInput.add()){
+                formulaInput.save();
             }
         });
         flowPane.getChildren().add(calculate);

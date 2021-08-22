@@ -11,6 +11,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.text.Font;
 import math.FormulaInterpreter;
+import nodes.FormulaInput;
+import services.History;
 
 import java.util.ArrayList;
 
@@ -23,10 +25,7 @@ public class Calculator extends Command {
     public ArrayList<Node> getNodes() {
         ArrayList<Node> items = new ArrayList<>();
         Font font = new Font("Helvetica",18 );
-        TextField formulaInput = new TextField();
-        formulaInput.setFont(font);
-        formulaInput.setMinWidth(500d);
-        formulaInput.setPromptText("Введите функцию, которую необходимо рассчитать");
+        FormulaInput formulaInput = new FormulaInput(new History("Calculator.txt"));
         TextField valueInput = new TextField();
         valueInput.setFont(font);
         valueInput.setMaxWidth(50d);
@@ -39,9 +38,11 @@ public class Calculator extends Command {
         calculate.setOnMouseClicked(event -> {
             double x = Double.parseDouble(valueInput.getText());
             try{
-                result.setText(String.valueOf(FormulaInterpreter.calculate(formulaInput.getText(), x)) + " " + String.valueOf(FormulaInterpreter.calculateDerivative(formulaInput.getText(), x, 0.000001d)));
+                result.setText(String.valueOf(FormulaInterpreter.calculate(formulaInput.getValue(), x)) + " " + String.valueOf(FormulaInterpreter.calculateDerivative(formulaInput.getValue(), x, 0.000001d)));
+                formulaInput.add();
+                formulaInput.save();
                 chart.getData().removeAll(chart.getData());
-                chart.getData().add(FormulaInterpreter.getChartData(formulaInput.getText(), -10d, 10d, 0.1));
+                chart.getData().add(FormulaInterpreter.getChartData(formulaInput.getValue(), -10d, 10d, 0.1));
             }catch (Exception e){
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Ошибка");
