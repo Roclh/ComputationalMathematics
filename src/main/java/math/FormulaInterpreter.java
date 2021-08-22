@@ -43,6 +43,15 @@ public class FormulaInterpreter {
         return series;
     }
 
+    public static XYChart.Series<Number, Number> getChartData(String formula, double min, double max){
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+        series.setName(formula);
+        for(double i = min; i<=max; i+=0.01d){
+            series.getData().add(new XYChart.Data<>(i, calculate(formula, i)));
+        }
+        return series;
+    }
+
     public static LineChart<Number, Number> getChart(){
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis();

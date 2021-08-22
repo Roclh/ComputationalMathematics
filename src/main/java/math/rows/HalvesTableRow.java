@@ -113,11 +113,11 @@ public class HalvesTableRow {
         this.fx.set(fx);
     }
 
-    public double getaMinusB() {
+    public double getAb() {
         return ab.get();
     }
 
-    public void setaMinusB(double aMinusB) {
-        this.ab.set(aMinusB);
+    public void setAb(double ab) {
+        this.ab.set(ab);
     }
 }
