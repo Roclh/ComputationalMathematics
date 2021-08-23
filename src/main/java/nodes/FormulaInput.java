@@ -11,6 +11,7 @@ public class FormulaInput extends ComboBox<String>{
                 "-fx-font-size: 18px");
         this.setPromptText("Введите функцию, которую необходимо рассчитать");
         this.setMinWidth(500d);
+        this.setMaxWidth(1000d);
         this.history = history;
         this.getItems().addAll(history.getFunctions());
         this.setEditable(true);

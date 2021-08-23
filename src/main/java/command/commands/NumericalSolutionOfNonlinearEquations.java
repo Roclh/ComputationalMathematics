@@ -3,17 +3,15 @@ package command.commands;
 import command.Command;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import math.FormulaInterpreter;
 import math.NumericalSolutionOfNonlinearEquationsLogics;
 import math.enums.NumericalSolutionOfNonlinearEquationsMethods;
-import nodes.FormulaInput;
+import nodes.*;
+import services.AlertEjector;
 import services.History;
 
 import java.util.ArrayList;
@@ -26,51 +24,44 @@ public class NumericalSolutionOfNonlinearEquations extends Command {
     @Override
     public ArrayList<Node> getNodes() {
         ArrayList<Node> nodes = new ArrayList<>();
-        Font font = new Font("Helvetica", 18);
         FormulaInput formulaInput = new FormulaInput(new History("NumericalSolution.txt"));
-        TextField minValueInput = new TextField();
-        minValueInput.setFont(font);
-        minValueInput.setMaxWidth(50d);
-        minValueInput.setPromptText("Min");
-        TextField maxValueInput = new TextField();
-        maxValueInput.setFont(font);
-        maxValueInput.setMaxWidth(50d);
-        maxValueInput.setPromptText("Max");
-        TextField accuracyInput = new TextField();
-        accuracyInput.setFont(font);
-        accuracyInput.setMaxWidth(100d);
-        accuracyInput.setPromptText("Accuracy");
+        ValueInput minValueInput = new ValueInput("Min");
+        ValueInput maxValueInput = new ValueInput("Max");
+        ValueInput accuracyInput = new ValueInput("Accuracy", 100d, 150d);
         LineChart<Number, Number> chart = FormulaInterpreter.getChart();
-        ComboBox<NumericalSolutionOfNonlinearEquationsMethods> cbxMethods = new ComboBox<>();
-        cbxMethods.getItems().addAll(NumericalSolutionOfNonlinearEquationsMethods.values());
-        cbxMethods.setValue(cbxMethods.getItems().stream().findAny().get());
-        FlowPane flowPane = new FlowPane(10, 10, formulaInput, minValueInput, maxValueInput, accuracyInput, cbxMethods, chart);
-        Button calculate = new Button("Рассчитать");
-        calculate.setFont(font);
+        ChoiseBox<NumericalSolutionOfNonlinearEquationsMethods> cbxMethods = new ChoiseBox<>(NumericalSolutionOfNonlinearEquationsMethods.values());
+        MainPane flowPane = new MainPane(10, 10, formulaInput, minValueInput, maxValueInput, accuracyInput, cbxMethods, chart);
+        MainButton calculate = new MainButton("Рассчитать");
         calculate.setOnMouseClicked(event -> {
-            chart.getData().removeAll(chart.getData());
-            if(flowPane.getChildren().stream().anyMatch(node -> node.getClass().equals(FlowPane.class))){
-                flowPane.getChildren().remove(flowPane.getChildren().stream().filter(node -> node.getClass().equals(FlowPane.class)).findFirst().get());
-            }
-            if (accuracyInput.getText().isEmpty()) {
-                flowPane.getChildren().add(NumericalSolutionOfNonlinearEquationsLogics.solve(
-                        formulaInput.getValue(),
-                        Double.parseDouble(minValueInput.getText()),
-                        Double.parseDouble(maxValueInput.getText()),
-                        cbxMethods.getValue()
-                ));
-            } else {
-                flowPane.getChildren().add(NumericalSolutionOfNonlinearEquationsLogics.solve(
-                        formulaInput.getValue(),
-                        Double.parseDouble(minValueInput.getText()),
-                        Double.parseDouble(maxValueInput.getText()),
-                        Double.parseDouble(accuracyInput.getText()),
-                        cbxMethods.getValue()
-                ));
-            }
-            chart.getData().add(FormulaInterpreter.getChartData(formulaInput.getValue(), Double.parseDouble(minValueInput.getText()), Double.parseDouble(maxValueInput.getText())));
-            if(formulaInput.add()){
-                formulaInput.save();
+            try {
+                chart.getData().removeAll(chart.getData());
+                if (flowPane.getChildren().stream().anyMatch(node -> node.getClass().equals(FlowPane.class))) {
+                    flowPane.getChildren().remove(flowPane.getChildren().stream().filter(node -> node.getClass().equals(FlowPane.class)).findFirst().get());
+                }
+                if (accuracyInput.getText().isEmpty()) {
+                    flowPane.getChildren().add(NumericalSolutionOfNonlinearEquationsLogics.solve(
+                            formulaInput.getValue(),
+                            Double.parseDouble(minValueInput.getText()),
+                            Double.parseDouble(maxValueInput.getText()),
+                            cbxMethods.getValue()
+                    ));
+                } else {
+                    flowPane.getChildren().add(NumericalSolutionOfNonlinearEquationsLogics.solve(
+                            formulaInput.getValue(),
+                            Double.parseDouble(minValueInput.getText()),
+                            Double.parseDouble(maxValueInput.getText()),
+                            Double.parseDouble(accuracyInput.getText()),
+                            cbxMethods.getValue()
+                    ));
+                }
+                chart.getData().add(FormulaInterpreter.getChartData(formulaInput.getValue(), Double.parseDouble(minValueInput.getText()), Double.parseDouble(maxValueInput.getText())));
+                if (formulaInput.add()) {
+                    formulaInput.save();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                Alert alert = AlertEjector.ejectError("Введены некорректные данные", "Проверьте правильность введенных вами данных и повторите попытку");
+                alert.showAndWait();
             }
         });
         flowPane.getChildren().add(calculate);
