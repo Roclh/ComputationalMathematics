@@ -5,8 +5,6 @@ import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Font;
 import math.FormulaInterpreter;
 import math.NumericalSolutionOfNonlinearEquationsLogics;
 import math.enums.NumericalSolutionOfNonlinearEquationsMethods;
@@ -29,7 +27,7 @@ public class NumericalSolutionOfNonlinearEquations extends Command {
         ValueInput maxValueInput = new ValueInput("Max");
         ValueInput accuracyInput = new ValueInput("Accuracy", 100d, 150d);
         LineChart<Number, Number> chart = FormulaInterpreter.getChart();
-        ChoiseBox<NumericalSolutionOfNonlinearEquationsMethods> cbxMethods = new ChoiseBox<>(NumericalSolutionOfNonlinearEquationsMethods.values());
+        ChooseBox<NumericalSolutionOfNonlinearEquationsMethods> cbxMethods = new ChooseBox<>(NumericalSolutionOfNonlinearEquationsMethods.values());
         MainPane flowPane = new MainPane(10, 10, formulaInput, minValueInput, maxValueInput, accuracyInput, cbxMethods, chart);
         MainButton calculate = new MainButton("Рассчитать");
         calculate.setOnMouseClicked(event -> {
