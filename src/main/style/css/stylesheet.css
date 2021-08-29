@@ -1,40 +1,76 @@
 #labList.list-view{
     -fx-min-width: 400px;
     -fx-border-color: #27292D;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+}
+
+#h1{
+    -fx-font-size: 36px;
+    -fx-font-family: Arial;
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+}
+
+#result{
+    -fx-font-size: 20px;
+    -fx-font-family: Arial;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-width: 2px;
+    -fx-border-color: #383B40;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+
+}
+
+#dark-blue {
+    -fx-background-color: #27292D;
+    -fx-background-radius: 5,4,3,5;
+    -fx-background-insets: 0,1,2,0;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+    -fx-font-family: "Arial";
+    -fx-text-fill: #FEFEFE;
+    -fx-font-size: 12px;
+    -fx-padding: 10 20 10 20;
 }
 
 .list-view{
     -fx-border-color: #27292D;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
 }
 
 .text-field{
     -fx-background-color: #27292D;
     -fx-font-size: 18px;
     -fx-font-family: "Arial";
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: #FEFEFE;
     -fx-opacity: 85%;
     -fx-border-color: #27292D;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
 }
 
 .combo-box{
     -fx-background-color: #27292D;
     -fx-border-width: 1;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
 }
 
 .combo-box .arrow-button{
     -fx-background-color: #27292D;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
 }
 
 .combo-box-popup{
     -fx-background-color: #27292D;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
 }
 
 .combo-box-base{
     -fx-background-color: #27292D;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
 }
 
 .combo-box:selected{
     -fx-background-color: #383B40;
+
 }
 
 .text-field:selected{
@@ -44,14 +80,14 @@
 .list-cell{
     -fx-font-size: 18px;
     -fx-font-family: "Arial";
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: #FEFEFE;
     -fx-opacity: 85%;
     -fx-border-color: #27292D;
 }
 
 .list-cell:filled:selected:focused, .list-cell:filled:selected {
     -fx-background-color: #27292D;
-    -fx-text-fill: white;
+    -fx-text-fill: #FEFEFE;
 }
 
 .list-cell:odd{
@@ -64,5 +100,5 @@
 
 .list-cell:filled:hover {
     -fx-background-color: #27292D;
-    -fx-text-fill: white;
+    -fx-text-fill: #FEFEFE;
 }

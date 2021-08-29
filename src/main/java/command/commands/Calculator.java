@@ -28,6 +28,8 @@ public class Calculator extends Command {
     @Override
     public ArrayList<Node> getNodes() {
         ArrayList<Node> items = new ArrayList<>();
+        Label header = new Label("Калькулятор");
+        header.setId("h1");
         Font font = new Font("Helvetica",18 );
         FormulaInput formulaInput = new FormulaInput(new History("Calculator.txt"));
         ValueInput valueInput = new ValueInput("X");
@@ -49,7 +51,7 @@ public class Calculator extends Command {
             }
         });
 
-        MainPane flowPane = new MainPane(10, 10, formulaInput, valueInput, calculate, result, chart);
+        MainPane flowPane = new MainPane(10, 10, header, formulaInput, valueInput, result, chart, calculate);
         flowPane.setPadding(new Insets(10d));
         items.add(flowPane);
         return items;

@@ -3,13 +3,17 @@ package math;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.FlowPane;
 import math.enums.NumericalSolutionOfNonlinearEquationsMethods;
 import math.rows.HalvesTableRow;
+import math.rows.IterTableRow;
 import math.rows.SecantTableRow;
-import org.apache.commons.math3.exception.ZeroException;
+import nodes.ResultBoxLabel;
 import org.apache.commons.math3.util.FastMath;
+
+import java.util.ArrayList;
 
 //-2.7x^3-1.48x^2+19.23x+6.35
 // 2.74x^3-1.93x^2-15.28x-3.72
@@ -20,12 +24,13 @@ public class NumericalSolutionOfNonlinearEquationsLogics {
         FlowPane result = new FlowPane(10,10);
         switch (method){
             case HALVES:
-                result.getChildren().add(solveHalves(function,min,max,accuracy));
+                result.getChildren().addAll(solveHalves(function,min,max,accuracy));
                 break;
             case SECANT:
-                result.getChildren().add(solveSecant(function,min,max,accuracy));
+                result.getChildren().addAll(solveSecant(function,min,max,accuracy));
                 break;
             case ITERATION:
+                result.getChildren().addAll(solveIter(function,min,max,accuracy));
                 break;
         }
         return result;
@@ -33,23 +38,14 @@ public class NumericalSolutionOfNonlinearEquationsLogics {
 
     public static FlowPane solve(String function, double min, double max, NumericalSolutionOfNonlinearEquationsMethods method) {
         double accuracy = 0.001;
-        FlowPane result = new FlowPane(10,10);
-        switch (method){
-            case HALVES:
-                result.getChildren().add(solveHalves(function,min,max,accuracy));
-                break;
-            case SECANT:
-                result.getChildren().add(solveSecant(function,min,max,accuracy));
-                break;
-            case ITERATION:
-                break;
-        }
-        return result;
+        return solve(function, min, max, accuracy, method);
     }
 
-    public static TableView<HalvesTableRow> solveHalves(String function, double min, double max, double accuracy){
+    public static ArrayList<Node> solveHalves(String function, double min, double max, double accuracy){
+        ArrayList<Node> result = new ArrayList<>();
         ObservableList<HalvesTableRow> rows = FXCollections.observableArrayList();
         TableView<HalvesTableRow> halvesTableView = new TableView<>(rows);
+        halvesTableView.setPrefWidth(800d);
         halvesTableView.getColumns().addAll(HalvesTableRow.getTableColumns());
         double a = min;
         double b = max;
@@ -57,7 +53,7 @@ public class NumericalSolutionOfNonlinearEquationsLogics {
         int n = 1;
         halvesTableView.getItems().add(new HalvesTableRow(n, a, b, x, FormulaInterpreter.calculate(function, a), FormulaInterpreter.calculate(function, b)
                 , FormulaInterpreter.calculate(function, x), FastMath.abs(b-a)));
-        while (FastMath.abs(a - b) >= accuracy && FastMath.abs(FormulaInterpreter.calculate(function, x)) >= accuracy) {
+        while (FastMath.abs(a - b) >= accuracy || FastMath.abs(FormulaInterpreter.calculate(function, x)) >= accuracy) {
             if (FormulaInterpreter.calculate(function, a) * FormulaInterpreter.calculate(function, x) <= 0d) {
                 b = x;
             } else {
@@ -69,12 +65,24 @@ public class NumericalSolutionOfNonlinearEquationsLogics {
                     , FormulaInterpreter.calculate(function, x), FastMath.abs(a-b)));
 
         }
-        return halvesTableView;
+        result.add(halvesTableView);
+        result.add(new ResultBoxLabel("Корень уравнения:" +
+                  x +
+                "\nЗначение функции в корне: " +
+                FormulaInterpreter.calculate(function,x) +
+                "\nПогрешность вычислений: " +
+                accuracy +
+                "\nКоличество корней на данном отрезке: " +
+                RootConditions.countRoots(function, min, max)));
+
+        return result;
     }
 
-    public static TableView<SecantTableRow> solveSecant(String function, double min, double max, double accuracy){
+    public static ArrayList<Node> solveSecant(String function, double min, double max, double accuracy){
+        ArrayList<Node> result = new ArrayList<>();
         ObservableList<SecantTableRow> rows = FXCollections.observableArrayList();
         TableView<SecantTableRow> secantTableView = new TableView<>(rows);
+        secantTableView.setPrefWidth(800d);
         secantTableView.getColumns().addAll(SecantTableRow.getTableColumns());
         int n = 1;
         double x0 = min;
@@ -103,7 +111,48 @@ public class NumericalSolutionOfNonlinearEquationsLogics {
         }else{
             System.out.println("Невозможно вычислить");
         }
-        return secantTableView;
+        result.add(secantTableView);
+        result.add(new ResultBoxLabel("Корень уравнения:" +
+                x1 +
+                "\nЗначение функции в корне: " +
+                FormulaInterpreter.calculate(function,x1) +
+                "\nПогрешность вычислений: " +
+                accuracy+
+                "\nКоличество корней на данном отрезке: " +
+                RootConditions.countRoots(function, min, max)));
+
+        return result;
+    }
+
+    public static ArrayList<Node> solveIter(String function, double min, double max, double accuracy){
+        ArrayList<Node> result = new ArrayList<>();
+        ObservableList<IterTableRow> rows = FXCollections.observableArrayList();
+        TableView<IterTableRow> iterTableView = new TableView<>(rows);
+        iterTableView.setPrefWidth(800d);
+        iterTableView.getColumns().addAll(IterTableRow.getTableColumns());
+        double paramLambda = 1/Math.max(FormulaInterpreter.calculateDerivative(function, min), FormulaInterpreter.calculateDerivative(function, max));
+        double prev = min;
+        double x = prev - paramLambda*FormulaInterpreter.calculate(function, prev);
+        int n = 1;
+        if( Math.abs(x-prev)>accuracy){
+            while(Math.abs(x - prev)>=accuracy || Math.abs(FormulaInterpreter.calculate(function, x))>=accuracy){
+                prev = x;
+                x = prev - paramLambda*FormulaInterpreter.calculate(function, prev);
+                iterTableView.getItems().add(new IterTableRow(n, prev, x, x - paramLambda*FormulaInterpreter.calculate(function, x),
+                        FormulaInterpreter.calculate(function, x), Math.abs(x - prev)));
+                n++;
+            }
+        }
+        result.add(iterTableView);
+        result.add(new ResultBoxLabel("Корень уравнения:" + x +
+                "\nЗначение функции в корне: " +
+                FormulaInterpreter.calculate(function,x) +
+                "\nПогрешность вычислений: " +
+                accuracy+
+                "\nКоличество корней на данном отрезке: " +
+                RootConditions.countRoots(function, min, max)));
+
+        return result;
     }
 }
 
