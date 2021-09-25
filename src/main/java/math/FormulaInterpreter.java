@@ -11,7 +11,7 @@ import org.gillius.jfxutils.chart.ChartPanManager;
 import org.gillius.jfxutils.chart.JFXChartUtil;
 
 public class FormulaInterpreter {
-    public static double calculate(String formula, double x){
+    public static double calculate(String formula, double x) {
         Expression calc = new ExpressionBuilder(formula)
                 .variables("x")
                 .build()
@@ -19,40 +19,45 @@ public class FormulaInterpreter {
         return calc.evaluate();
     }
 
-    public static double calculateDerivative(String formula, double x, double accuracy){
+    public static double calculateDerivative(String formula, double x, double accuracy) {
         Expression fx = new ExpressionBuilder(formula)
                 .variables("x")
                 .build();
-        return (fx.setVariable("x", x+accuracy).evaluate()-fx.setVariable("x", x).evaluate())/(accuracy);
+        return (fx.setVariable("x", x + accuracy).evaluate() - fx.setVariable("x", x).evaluate()) / (accuracy);
     }
 
-    public static double calculateDerivative(String formula, double x){
-        Expression fx = new ExpressionBuilder(formula)
-                .variables("x")
-                .build();
-        return (fx.setVariable("x", x+0.001d).evaluate()-fx.setVariable("x", x).evaluate())/(0.001d);
+    public static double calculateDerivative(String formula, double x) {
+        double accuracy = 0.001d;
+        return calculateDerivative(formula, x, accuracy);
     }
 
+    public static double calculateSecondDerivative(String formula, double x, double accuracy) {
+        return (calculateDerivative(formula, x + accuracy, accuracy) - calculateDerivative(formula, x, accuracy) / accuracy);
+    }
 
-    public static XYChart.Series<Number, Number> getChartData(String formula, double min, double max, double step){
+    public static double calculateThirdDerivative(String formula, double x, double accuracy){
+        return (calculateDerivative(formula, x + accuracy, accuracy) - calculateSecondDerivative(formula, x, accuracy) / accuracy);
+    }
+
+    public static XYChart.Series<Number, Number> getChartData(String formula, double min, double max, double step) {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName(formula);
-        for(double i = min; i<=max; i+=step){
+        for (double i = min; i <= max; i += step) {
             series.getData().add(new XYChart.Data<>(i, calculate(formula, i)));
         }
         return series;
     }
 
-    public static XYChart.Series<Number, Number> getChartData(String formula, double min, double max){
+    public static XYChart.Series<Number, Number> getChartData(String formula, double min, double max) {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName(formula);
-        for(double i = min; i<=max; i+=0.01d){
+        for (double i = min; i <= max; i += 0.01d) {
             series.getData().add(new XYChart.Data<>(i, calculate(formula, i)));
         }
         return series;
     }
 
-    public static LineChart<Number, Number> getChart(){
+    public static LineChart<Number, Number> getChart() {
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis();
         xAxis.setLabel("X");
@@ -60,31 +65,30 @@ public class FormulaInterpreter {
         LineChart<Number, Number> chart = new LineChart<>(xAxis, yAxis);
         chart.setStyle("-fx-stroke-width: 1px;");
         chart.setCreateSymbols(false);
-        ChartPanManager panner = new ChartPanManager( chart );
-        panner.setMouseFilter( event -> {
-            if ( event.getButton() == MouseButton.SECONDARY ||
-                    ( event.getButton() == MouseButton.PRIMARY &&
-                            event.isShortcutDown() ) ) {
+        ChartPanManager panner = new ChartPanManager(chart);
+        panner.setMouseFilter(event -> {
+            if (event.getButton() == MouseButton.SECONDARY ||
+                    (event.getButton() == MouseButton.PRIMARY &&
+                            event.isShortcutDown())) {
                 //let it through
             } else {
                 event.consume();
             }
-        } );
+        });
         panner.start();
 
 
+        JFXChartUtil.setupZooming(chart, event -> {
+            if (event.getButton() != MouseButton.PRIMARY ||
+                    event.isShortcutDown()) {
 
-        JFXChartUtil.setupZooming( chart, event->{
-            if ( event.getButton() != MouseButton.PRIMARY ||
-                    event.isShortcutDown() ){
-
-            } else{
+            } else {
                 event.consume();
             }
 
-        } );
+        });
 
-        JFXChartUtil.addDoublePrimaryClickAutoRangeHandler( chart );
+        JFXChartUtil.addDoublePrimaryClickAutoRangeHandler(chart);
 
         return chart;
     }
