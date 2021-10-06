@@ -11,6 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 
 
@@ -26,7 +27,7 @@ public class Controller {
     private ListView<String> labList;
 
     @FXML
-    private FlowPane labView;
+    private ScrollPane labScroll;
 
     @FXML
     void initialize() {
@@ -34,9 +35,12 @@ public class Controller {
         ObservableList<String> list = FXCollections.observableArrayList(allCommands.getCommands());
         labList.setItems(list);
         labList.setStyle("-fx-background-color: #010101;");
-        labView.setStyle("-fx-background-color: #1F2023");
-        labView.setPrefSize(2780d, 1920d);
-        labView.setMaxSize(2780d, 1920d);
+        labScroll.setStyle("-fx-background-color: #1F2023");
+        labScroll.setPrefSize(2780d, 1920d);
+        labScroll.setMaxSize(2780d, 1920d);
+        FlowPane labView = new FlowPane(10, 10);
+        labView.setStyle("-fx-background-color: #1F2023;");
+        labScroll.setContent(labView);
         labList.setOnMouseClicked(event -> {
             labView.getChildren().removeAll(labView.getChildren());
             labView.getChildren().addAll(allCommands.getCommandByName(labList.getSelectionModel().getSelectedItem()).getNodes());

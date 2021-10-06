@@ -1,6 +1,7 @@
 package command.commands;
 
 import command.Command;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.*;
@@ -35,52 +36,54 @@ public class NumericalSolutionOfNonlinearEquations extends Command {
         MainPane flowPane = new MainPane(10, 10, header, formulaInput, minValueInput, maxValueInput, accuracyInput, cbxMethods, chart);
         MainButton calculate = new MainButton("Рассчитать");
         calculate.setOnMouseClicked(event -> {
-            try {
-                chart.getData().removeAll(chart.getData());
-                if (flowPane.getChildren().stream().anyMatch(node -> node.getClass().equals(FlowPane.class))) {
-                    flowPane.getChildren().remove(
-                            flowPane.getChildren().stream()
-                                    .filter(node -> node.getClass().equals(FlowPane.class))
-                                    .findFirst()
-                                    .get()
+            Platform.runLater(() -> {
+                try {
+                    chart.getData().removeAll(chart.getData());
+                    if (flowPane.getChildren().stream().anyMatch(node -> node.getClass().equals(FlowPane.class))) {
+                        flowPane.getChildren().remove(
+                                flowPane.getChildren().stream()
+                                        .filter(node -> node.getClass().equals(FlowPane.class))
+                                        .findFirst()
+                                        .get()
+                        );
+                    }
+                    if (cbxMethods.getValue().equals(NumericalSolutionOfNonlinearEquationsMethods.SECANT)) {
+                        RootConditions.checkSecantMethod(formulaInput.getValue(), minValueInput.getDouble(), maxValueInput.getDouble());
+                    }
+                    if (accuracyInput.getText().isEmpty()) {
+                        flowPane.getChildren().add(NumericalSolutionOfNonlinearEquationsLogics.solve(
+                                formulaInput.getValue(),
+                                minValueInput.getDouble(),
+                                maxValueInput.getDouble(),
+                                cbxMethods.getValue()
+                        ));
+                    } else {
+                        flowPane.getChildren().add(NumericalSolutionOfNonlinearEquationsLogics.solve(
+                                formulaInput.getValue(),
+                                minValueInput.getDouble(),
+                                maxValueInput.getDouble(),
+                                accuracyInput.getAccuracyDouble(),
+                                cbxMethods.getValue()
+                        ));
+                    }
+                    chart.getData().add(FormulaInterpreter.getChartData(
+                            formulaInput.getValue(),
+                            minValueInput.getDouble(),
+                            maxValueInput.getDouble())
                     );
+                    if (formulaInput.add()) {
+                        formulaInput.save();
+                    }
+                } catch (SecantMethodException e) {
+                    e.printStackTrace();
+                    Alert alert = AlertEjector.ejectError("Введены некорректные данные", e.getMessage());
+                    alert.showAndWait();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Alert alert = AlertEjector.ejectError("Введены некорректные данные", "Проверьте правильность введенных вами данных и повторите попытку");
+                    alert.showAndWait();
                 }
-                if (cbxMethods.getValue().equals(NumericalSolutionOfNonlinearEquationsMethods.SECANT)) {
-                    RootConditions.checkSecantMethod(formulaInput.getValue(), minValueInput.getDouble(), maxValueInput.getDouble());
-                }
-                if (accuracyInput.getText().isEmpty()) {
-                    flowPane.getChildren().add(NumericalSolutionOfNonlinearEquationsLogics.solve(
-                            formulaInput.getValue(),
-                            minValueInput.getDouble(),
-                            maxValueInput.getDouble(),
-                            cbxMethods.getValue()
-                    ));
-                } else {
-                    flowPane.getChildren().add(NumericalSolutionOfNonlinearEquationsLogics.solve(
-                            formulaInput.getValue(),
-                            minValueInput.getDouble(),
-                            maxValueInput.getDouble(),
-                            accuracyInput.getAccuracyDouble(),
-                            cbxMethods.getValue()
-                    ));
-                }
-                chart.getData().add(FormulaInterpreter.getChartData(
-                        formulaInput.getValue(),
-                        minValueInput.getDouble(),
-                        maxValueInput.getDouble())
-                );
-                if (formulaInput.add()) {
-                    formulaInput.save();
-                }
-            } catch (SecantMethodException e) {
-                e.printStackTrace();
-                Alert alert = AlertEjector.ejectError("Введены некорректные данные", e.getMessage());
-                alert.showAndWait();
-            } catch (Exception e) {
-                e.printStackTrace();
-                Alert alert = AlertEjector.ejectError("Введены некорректные данные", "Проверьте правильность введенных вами данных и повторите попытку");
-                alert.showAndWait();
-            }
+            });
         });
         flowPane.getChildren().add(calculate);
         nodes.add(flowPane);

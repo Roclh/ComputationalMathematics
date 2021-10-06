@@ -102,3 +102,24 @@
     -fx-background-color: #27292D;
     -fx-text-fill: #FEFEFE;
 }
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+#approximation .default-color0.chart-series-line { -fx-stroke: #383B40; }
+#approximation .default-color1.chart-series-line { -fx-stroke: transparent; }
+
+#approximation .default-color0.chart-line-symbol {
+    -fx-background-color: transparent, transparent;
+}
+#approximation .default-color1.chart-line-symbol {
+    -fx-background-color: #AC3E3E, transparent;
+}
+
+#approximation .default-color0.chart-legend-item-symbol{
+    -fx-background-color: #383B40;
+}
+#approximation .default-color1.chart-legend-item-symbol{
+    -fx-background-color: #AC3E3E;
+}

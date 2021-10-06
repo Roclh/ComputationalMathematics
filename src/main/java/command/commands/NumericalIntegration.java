@@ -1,13 +1,14 @@
 package command.commands;
 
 import command.Command;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import math.NumericalIntegrationLogics;
-import math.NumericalSolutionOfNonlinearEquationsLogics;
 import math.enums.NumericalIntegrationMethods;
+import math.excpetions.ZeroOrNegativeAccuracyException;
 import nodes.*;
 import services.AlertEjector;
 import services.History;
@@ -32,41 +33,51 @@ public class NumericalIntegration extends Command {
         MainPane flowPane = new MainPane(10, 10, header, formulaInput, minValueInput, maxValueInput, accuracyInput, cbxMethods);
         MainButton calculate = new MainButton("Рассчитать");
         calculate.setOnMouseClicked(event -> {
-            try{
-                if (flowPane.getChildren().stream().anyMatch(node -> node.getClass().equals(FlowPane.class))) {
-                    flowPane.getChildren().remove(
-                            flowPane.getChildren().stream()
-                                    .filter(node -> node.getClass().equals(FlowPane.class))
-                                    .findFirst()
-                                    .get()
-                    );
+            Platform.runLater(() -> {
+                try {
+                    if (flowPane.getChildren().stream().anyMatch(node -> node.getClass().equals(FlowPane.class))) {
+                        flowPane.getChildren().remove(
+                                flowPane.getChildren().stream()
+                                        .filter(node -> node.getClass().equals(FlowPane.class))
+                                        .findFirst()
+                                        .get()
+                        );
+                    }
+                    if (accuracyInput.getText().isEmpty()) {
+                        try {
+                            flowPane.getChildren().add(NumericalIntegrationLogics.solve(
+                                    formulaInput.getValue(),
+                                    minValueInput.getDouble(),
+                                    maxValueInput.getDouble(),
+                                    accuracyInput.getAccuracyDouble(),
+                                    cbxMethods.getValue()
+                            ));
+                        } catch (ZeroOrNegativeAccuracyException e) {
+                            e.printStackTrace();
+                            Alert alert = AlertEjector.ejectError("Введены некорректные данные", e.getMessage());
+                            alert.showAndWait();
+                        }
+                    } else {
+                        flowPane.getChildren().add(NumericalIntegrationLogics.solve(
+                                formulaInput.getValue(),
+                                minValueInput.getDouble(),
+                                maxValueInput.getDouble(),
+                                cbxMethods.getValue()
+                        ));
+                    }
+                    if (formulaInput.add()) {
+                        formulaInput.save();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Alert alert = AlertEjector.ejectError("Введены некорректные данные", e.getMessage());
+                    alert.showAndWait();
                 }
-                if (accuracyInput.getText().isEmpty()) {
-                    flowPane.getChildren().add(NumericalIntegrationLogics.solve(
-                            formulaInput.getValue(),
-                            minValueInput.getDouble(),
-                            maxValueInput.getDouble(),
-                            cbxMethods.getValue()
-                    ));
-                } else {
-                    flowPane.getChildren().add(NumericalIntegrationLogics.solve(
-                            formulaInput.getValue(),
-                            minValueInput.getDouble(),
-                            maxValueInput.getDouble(),
-                            accuracyInput.getAccuracyDouble(),
-                            cbxMethods.getValue()
-                    ));
-                }
-                if (formulaInput.add()) {
-                    formulaInput.save();
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-                Alert alert = AlertEjector.ejectError("Введены некорректные данные", e.getMessage());
-                alert.showAndWait();
-            }
+            });
         });
-        flowPane.getChildren().add(calculate);
+        flowPane.getChildren().
+
+                add(calculate);
         nodes.add(flowPane);
         return nodes;
     }

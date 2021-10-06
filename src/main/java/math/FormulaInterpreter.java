@@ -1,14 +1,16 @@
 package math;
 
 
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
+import command.commands.Calculator;
+import command.commands.NumericalDifferentiation;
+import javafx.scene.chart.*;
 import javafx.scene.input.MouseButton;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.gillius.jfxutils.chart.ChartPanManager;
 import org.gillius.jfxutils.chart.JFXChartUtil;
+
+import java.util.Locale;
 
 public class FormulaInterpreter {
     public static double calculate(String formula, double x) {
@@ -19,12 +21,18 @@ public class FormulaInterpreter {
         return calc.evaluate();
     }
 
-    public static double calculateDerivative(String formula, double x, double accuracy) {
-        Expression fx = new ExpressionBuilder(formula)
-                .variables("x")
-                .build();
-        return (fx.setVariable("x", x + accuracy).evaluate() - fx.setVariable("x", x).evaluate()) / (accuracy);
+    public static double calculateDerivative(String formula, double x, double accuracy, int depth){
+        if(depth>1){
+            return (calculateDerivative(formula,x+accuracy, accuracy, depth-1)-
+                    calculateDerivative(formula,x-accuracy,accuracy,depth-1))/(2*accuracy)-calculate(formula,x)*accuracy;
+        }
+        return calculateDerivative(formula,x, accuracy);
     }
+
+    public static double calculateDerivative(String formula, double x, double accuracy){
+        return (calculate(formula, x+accuracy)-calculate(formula, x-accuracy))/(2*accuracy);
+    }
+
 
     public static double calculateDerivative(String formula, double x) {
         double accuracy = 0.001d;
@@ -32,16 +40,17 @@ public class FormulaInterpreter {
     }
 
     public static double calculateSecondDerivative(String formula, double x, double accuracy) {
-        return (calculateDerivative(formula, x + accuracy, accuracy) - calculateDerivative(formula, x, accuracy) / accuracy);
+        return (calculate(formula, x+accuracy) - 2*calculate(formula, x)+ calculate(formula, x-accuracy)) / (accuracy*accuracy);
     }
 
     public static double calculateThirdDerivative(String formula, double x, double accuracy){
-        return (calculateDerivative(formula, x + accuracy, accuracy) - calculateSecondDerivative(formula, x, accuracy) / accuracy);
+        return (calculate(formula, x+2*accuracy)-2*calculate(formula,x+accuracy)+2*calculate(formula,x-accuracy)-
+                calculate(formula, x-2*accuracy))/(2*Math.pow(accuracy,3));
     }
 
     public static XYChart.Series<Number, Number> getChartData(String formula, double min, double max, double step) {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
-        series.setName(formula);
+        series.setName("y = "+ formula);
         for (double i = min; i <= max; i += step) {
             series.getData().add(new XYChart.Data<>(i, calculate(formula, i)));
         }
@@ -55,6 +64,31 @@ public class FormulaInterpreter {
             series.getData().add(new XYChart.Data<>(i, calculate(formula, i)));
         }
         return series;
+    }
+
+    public static XYChart.Series<Number, Number> getPosChartData(String formula, double min, double max){
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+        series.setName("y = " + formula);
+        for(double i = min; i<=max; i+=0.1d){
+            if(i<=0){
+                continue;
+            }
+            double val = calculate(formula,i);
+            if(val>0){
+                series.getData().add(new XYChart.Data<>(i, val));
+            }
+        }
+        return series;
+    }
+
+    public static BarChart<String, Number> getGist(){
+        CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis yAxis = new NumberAxis();
+        xAxis.setLabel("X");
+        yAxis.setLabel("f(X)");
+        BarChart<String, Number> chart = new BarChart<>(xAxis, yAxis);
+        chart.setStyle("-fx-stroke-width: 1px;");
+        return chart;
     }
 
     public static LineChart<Number, Number> getChart() {

@@ -20,6 +20,18 @@ public class RootConditions {
         return maxRoot;
     }
 
+    public static double maxValue(String function, double min, double max, double step, int depth){
+        double maxRoot = 0;
+        for(double i = min; i< max; i+=step){
+            double root = FormulaInterpreter.calculateDerivative(function, i, step, depth);
+            if(root>maxRoot){
+                maxRoot = root;
+            }
+        }
+        System.out.println(maxRoot);
+        return maxRoot;
+    }
+
     public static int countRoots(String function, double min, double max) {
         double step = 0.01d;
         return countRoots(function, min, max, step);
