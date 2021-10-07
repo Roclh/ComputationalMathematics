@@ -26,9 +26,9 @@ public class NumericalIntegration extends Command {
         Label header = new Label("Численное интегрирование");
         header.setId("h1");
         FormulaInput formulaInput = new FormulaInput(new History("NumericalIntegration.txt"));
-        ValueInput minValueInput = new ValueInput("Min");
-        ValueInput maxValueInput = new ValueInput("Max");
-        ValueInput accuracyInput = new ValueInput("Accuracy", 100d, 150d);
+        ValueInput<Double> minValueInput = new ValueInput<>("Min");
+        ValueInput<Double> maxValueInput = new ValueInput<>("Max");
+        ValueInput<Double> accuracyInput = new ValueInput<>("Accuracy", 100d, 150d);
         ChooseBox<NumericalIntegrationMethods> cbxMethods = new ChooseBox<>(NumericalIntegrationMethods.values());
         MainPane flowPane = new MainPane(10, 10, header, formulaInput, minValueInput, maxValueInput, accuracyInput, cbxMethods);
         MainButton calculate = new MainButton("Рассчитать");

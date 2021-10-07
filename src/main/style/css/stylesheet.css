@@ -123,3 +123,25 @@
 #approximation .default-color1.chart-legend-item-symbol{
     -fx-background-color: #AC3E3E;
 }
+
+#interpolation .default-color0.chart-series-line { -fx-stroke: #383B40; }
+#interpolation .default-color1.chart-series-line { -fx-stroke: transparent; }
+#interpolation .default-color2.chart-series-line { -fx-stroke: transparent; }
+
+#interpolation .default-color0.chart-line-symbol{
+    -fx-background-color: transparent transparent;
+}
+#interpolation .default-color1.chart-line-symbol{
+    -fx-background-color: #AC3E3E transparent;
+}
+#interpolation .default-color2.chart-line-symbol{
+    -fx-background-color: green transparent;
+}
+
+#interpolation .default-color1.chart-legend-item-symbol{
+    -fx-background-color: #AC3E3E;
+}
+
+#interpolation .default-color1.chart-legend-item-symbol{
+    -fx-background-color: green;
+}

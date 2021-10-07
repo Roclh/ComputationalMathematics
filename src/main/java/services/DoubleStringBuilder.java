@@ -2,7 +2,7 @@ package services;
 
 import com.sun.javafx.binding.StringFormatter;
 
-public class DoubleStringBuilder {
+public class DoubleStringBuilder{
     private final StringBuilder stringBuilder;
 
     public DoubleStringBuilder(StringBuilder stringBuilder) {

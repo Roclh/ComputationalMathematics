@@ -28,9 +28,9 @@ public class NumericalSolutionOfNonlinearEquations extends Command {
         Label header = new Label("Численное решение нелинейных уравнений");
         header.setId("h1");
         FormulaInput formulaInput = new FormulaInput(new History("NumericalSolution.txt"));
-        ValueInput minValueInput = new ValueInput("Min");
-        ValueInput maxValueInput = new ValueInput("Max");
-        ValueInput accuracyInput = new ValueInput("Accuracy", 100d, 150d);
+        ValueInput<Double> minValueInput = new ValueInput<>("Min");
+        ValueInput<Double> maxValueInput = new ValueInput<>("Max");
+        ValueInput<Double> accuracyInput = new ValueInput<>("Accuracy", 100d, 150d);
         LineChart<Number, Number> chart = FormulaInterpreter.getChart();
         ChooseBox<NumericalSolutionOfNonlinearEquationsMethods> cbxMethods = new ChooseBox<>(NumericalSolutionOfNonlinearEquationsMethods.values());
         MainPane flowPane = new MainPane(10, 10, header, formulaInput, minValueInput, maxValueInput, accuracyInput, cbxMethods, chart);

@@ -1,8 +1,5 @@
 package math;
 
-
-import command.commands.Calculator;
-import command.commands.NumericalDifferentiation;
 import javafx.scene.chart.*;
 import javafx.scene.input.MouseButton;
 import net.objecthunter.exp4j.Expression;
@@ -10,15 +7,20 @@ import net.objecthunter.exp4j.ExpressionBuilder;
 import org.gillius.jfxutils.chart.ChartPanManager;
 import org.gillius.jfxutils.chart.JFXChartUtil;
 
-import java.util.Locale;
 
 public class FormulaInterpreter {
-    public static double calculate(String formula, double x) {
+    public static double calculate(String formula, double x) throws NumberFormatException{
         Expression calc = new ExpressionBuilder(formula)
                 .variables("x")
                 .build()
                 .setVariable("x", x);
-        return calc.evaluate();
+        double result = calc.evaluate();
+        if(Double.isNaN(result) || result == Double.POSITIVE_INFINITY|| result == Double.NEGATIVE_INFINITY){
+            throw new NumberFormatException("При вычислении получилось невозможное значение");
+        }else {
+            return result;
+        }
+
     }
 
     public static double calculateDerivative(String formula, double x, double accuracy, int depth){

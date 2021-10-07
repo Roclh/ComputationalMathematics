@@ -169,15 +169,15 @@ public class FunctionApproximationLogics {
         }
         ArrayList<Double> result = Gaussian.solve(new Matrix(new double[]{sxx, sx, sxy}, new double[]{sx, xArray.size(), sy}));
         DoubleStringBuilder answer = new DoubleStringBuilder(new StringBuilder());
-        answer.append("Линейный: y = ").append(result.get(0)).append(" * x + ").append(result.get(1)).append("\r\n");
+        answer.append("Линейный: y = ").append(result.get(0)).append(" * x + ").append(result.get(1)).endl();
         DoubleStringBuilder func= new DoubleStringBuilder(new StringBuilder());
         functions[0] = func.append(result.get(0)).append("*x+").append(result.get(1)).toString();
         double s = 0;
         for (int i = 0; i < xArray.size(); i++) {
             s += Math.pow(result.get(0) * xArray.get(i) + result.get(1) - yArray.get(i), 2);
         }
-        answer.append("Мера отклонения: ").append(s).append("\r\n");
-        answer.append("Среднеквадратичное отклонение: ").append(Math.sqrt(s / xArray.size())).append("\r\n");
+        answer.append("Мера отклонения: ").append(s).endl();
+        answer.append("Среднеквадратичное отклонение: ").append(Math.sqrt(s / xArray.size())).endl();
         double up = 0;
         double sumOfLinealFunction = 0;
         double squares = 0;
@@ -186,7 +186,7 @@ public class FunctionApproximationLogics {
             sumOfLinealFunction += result.get(0) * xArray.get(i) + result.get(1);
             squares += Math.pow(result.get(0) * xArray.get(i) + result.get(1), 2);
         }
-        answer.append("Достоверность аппроксимации: ").append(1 - (up / (squares - Math.pow(sumOfLinealFunction, 2) / xArray.size()))).append("\r\n");
+        answer.append("Достоверность аппроксимации: ").append(1 - (up / (squares - Math.pow(sumOfLinealFunction, 2) / xArray.size()))).endl();
 
         accuracy[0] = 1 - (up / (Math.sqrt(s / xArray.size())));
         double meanX = 0;

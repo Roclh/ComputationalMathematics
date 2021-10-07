@@ -10,8 +10,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import math.FunctionApproximationLogics;
-import math.NumericalIntegrationLogics;
-import math.excpetions.ZeroOrNegativeAccuracyException;
 import nodes.FileInputButton;
 import nodes.MainButton;
 import nodes.MainTextArea;
@@ -34,34 +32,33 @@ public class FunctionApproximation extends Command {
         MainButton calculate = new MainButton("Рассчитать");
         VBox box = new VBox(10,header, textInput, fileButton, calculate);
         FlowPane flowPane = new FlowPane(10, 10,box);
-        calculate.setOnMouseClicked(event -> {
-            Platform.runLater(()->{
-                try {
-                    if (flowPane.getChildren().stream().anyMatch(node -> node.getClass().equals(LineChart.class))) {
-                        flowPane.getChildren().removeIf(node -> node.getClass().equals(LineChart.class));
-                    }
-                    if (flowPane.getChildren().stream().anyMatch(node -> node.getClass().equals(FlowPane.class))) {
-                        flowPane.getChildren().remove(
-                                flowPane.getChildren().stream()
-                                        .filter(node -> node.getClass().equals(FlowPane.class))
-                                        .findFirst()
-                                        .get()
-                        );
-                    }
-                    if (textInput.getText().isEmpty()) {
-                            Alert alert = AlertEjector.ejectError("Введены некорректные данные", "Повторите попытку");
-                            alert.showAndWait();
-                    } else {
-                        flowPane.getChildren().addAll(FunctionApproximationLogics.calculate(textInput.getText()));
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Alert alert = AlertEjector.ejectError("Введены некорректные данные", e.getMessage());
-                    alert.showAndWait();
+        calculate.setOnMouseClicked(event -> Platform.runLater(()->{
+            try {
+                if (flowPane.getChildren().stream().anyMatch(node -> node.getClass().equals(LineChart.class))) {
+                    flowPane.getChildren().removeIf(node -> node.getClass().equals(LineChart.class));
                 }
-            });
-        });
-        flowPane.setPadding(new Insets(10d));
+                if (flowPane.getChildren().stream().anyMatch(node -> node.getClass().equals(FlowPane.class))) {
+                    flowPane.getChildren().remove(
+                            flowPane.getChildren().stream()
+                                    .filter(node -> node.getClass().equals(FlowPane.class))
+                                    .findFirst()
+                                    .get()
+                    );
+                }
+                if (textInput.getText().isEmpty()) {
+                        Alert alert = AlertEjector.ejectError("Введены некорректные данные", "Повторите попытку");
+                        alert.showAndWait();
+                } else {
+                    flowPane.getChildren().addAll(FunctionApproximationLogics.calculate(textInput.getText()));
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Alert alert = AlertEjector.ejectError("Введены некорректные данные", e.getMessage());
+                alert.showAndWait();
+            }
+        }));
+        flowPane.setPadding(new Insets(20d));
         items.add(flowPane);
         return items;
     }

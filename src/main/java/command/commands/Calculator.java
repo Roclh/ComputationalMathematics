@@ -32,7 +32,7 @@ public class Calculator extends Command {
         header.setId("h1");
         Font font = new Font("Helvetica",18 );
         FormulaInput formulaInput = new FormulaInput(new History("Calculator.txt"));
-        ValueInput valueInput = new ValueInput("X");
+        ValueInput<Double> valueInput = new ValueInput<>("X");
         Label result = new Label("");
         result.setFont(font);
         LineChart<Number, Number> chart = FormulaInterpreter.getChart();
@@ -40,7 +40,7 @@ public class Calculator extends Command {
         calculate.setOnMouseClicked(event -> {
             double x = Double.parseDouble(valueInput.getText());
             try{
-                result.setText(FormulaInterpreter.calculate(formulaInput.getValue(), x) + " " + String.valueOf(FormulaInterpreter.calculateDerivative(formulaInput.getValue(), x, 0.000001d)));
+                result.setText(FormulaInterpreter.calculate(formulaInput.getValue(), x) + " " + FormulaInterpreter.calculateDerivative(formulaInput.getValue(), x, 0.000001d));
                 formulaInput.add();
                 formulaInput.save();
                 chart.getData().removeAll(chart.getData());
@@ -50,7 +50,6 @@ public class Calculator extends Command {
                 alert.showAndWait();
             }
         });
-
         MainPane flowPane = new MainPane(10, 10, header, formulaInput, valueInput, result, chart, calculate);
         flowPane.setPadding(new Insets(10d));
         items.add(flowPane);
