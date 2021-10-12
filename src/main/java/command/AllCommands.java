@@ -1,14 +1,17 @@
 package command;
 
 import command.commands.*;
+import javafx.scene.control.ScrollPane;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class AllCommands {
     ArrayList<Command> commands = new ArrayList<>();
+    ScrollPane labScroll;
 
-    public AllCommands() {
+    public AllCommands(ScrollPane labScroll) {
+        this.labScroll = labScroll;
         init();
     }
 
@@ -18,7 +21,7 @@ public class AllCommands {
         commands.add(new NumericalIntegration());
         commands.add(new FunctionApproximation());
         commands.add(new FunctionInterpolation());
-        commands.add(new NumericalDifferentiation());
+        commands.add(new NumericalDifferentiation(this.labScroll));
     }
 
     public Command getCommandByName(String name){

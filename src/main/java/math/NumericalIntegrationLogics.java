@@ -92,12 +92,12 @@ public class NumericalIntegrationLogics {
         int n = chooseNTrapezoid(function, min, max, accuracy);
         double result = 0;
         double h = (max - min) / n;
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i <= n; i++) {
             integralTableView.getItems().add(new IntegralTableRow(i, min + i * h, FormulaInterpreter.calculate(function, min + h * i)));
-            result += h * (FormulaInterpreter.calculate(function, min + h * i));
+            result += (FormulaInterpreter.calculate(function, min + h * i));
         }
-        double inaccuracy = Math.abs(h * ((FormulaInterpreter.calculate(function, min) + FormulaInterpreter.calculate(function, min)) / 2 + result));
-        result += h * (FormulaInterpreter.calculate(function, min) + FormulaInterpreter.calculate(function, max)) / 2;
+        result = h * ((FormulaInterpreter.calculate(function, min) + FormulaInterpreter.calculate(function, max)) / 2+result);
+        double inaccuracy = Math.abs(RootConditions.maxValueSecondDerivative(function,min,max,accuracy) * Math.pow(max-min, 3) / (12 * Math.pow(n, 2)));
         answer.add(integralTableView);
         answer.add(new ResultBoxLabel("Результаты метода трапеций:" +
                 "\r\nf'I: " + result +
@@ -130,14 +130,14 @@ public class NumericalIntegrationLogics {
         double result = 0;
         double h = (max-min)/n;
         for(int i =0; i<=n; i+=2){
-            double buf = (2*(FormulaInterpreter.calculate(function,min+h*i)))+(4*(FormulaInterpreter.calculate(function, min+h*(i+1))));
-            integralTableView.getItems().add(new IntegralTableRow(i/2, min+h*(i+1), buf));
+            double buf = (4*(FormulaInterpreter.calculate(function,min+h*i)))+(2*(FormulaInterpreter.calculate(function, min+h*(i+1))));
+            integralTableView.getItems().add(new IntegralTableRow(i/2, min+h*i, buf));
             result+=buf;
         }
         result = h/3*(result+FormulaInterpreter.calculate(function,max));
         double inaccuracy = Math.abs(RootConditions.maxValue(function, min, max, accuracy, 4) * Math.pow(max - min, 5) / (180 * Math.pow(n, 4)));
         answer.add(integralTableView);
-        answer.add(new ResultBoxLabel("Результаты метода трапеций:" +
+        answer.add(new ResultBoxLabel("Результаты метода Симпсона:" +
                 "\r\nf'I: " + result +
                 "\r\nf'R(n): " + inaccuracy +
                 "\r\nn: " + n)
@@ -147,8 +147,9 @@ public class NumericalIntegrationLogics {
 
     private static int chooseNSimpson(String function, double min, double max, double accuracy){
         int n = (int) Math.abs(
-                Math.pow(RootConditions.maxValue(function,min,max,accuracy, 4)*Math.pow(max-min, 3)/180/accuracy, 0.25d)
+                Math.pow(RootConditions.maxValue(function,min,max,accuracy, 4)*Math.pow(max-min, 5)/180/accuracy, 0.25d)
         );
+        System.out.println(RootConditions.maxValue(function,min,max,accuracy, 4));
         if (n % 2 == 1) {
             n += 1;
         } else {

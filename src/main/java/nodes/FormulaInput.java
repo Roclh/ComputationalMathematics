@@ -1,6 +1,7 @@
 package nodes;
 
 import javafx.scene.control.ComboBox;
+import math.excpetions.EmptyFormulaException;
 import services.History;
 
 public class FormulaInput extends ComboBox<String>{
@@ -13,6 +14,11 @@ public class FormulaInput extends ComboBox<String>{
         this.history = history;
         this.getItems().addAll(history.getFunctions());
         this.setEditable(true);
+    }
+
+    public String getFormula() throws EmptyFormulaException {
+        if(this.getValue().isEmpty()) throw new EmptyFormulaException("В вводе отсутствует функция");
+        else return this.getValue();
     }
 
     public boolean save(){

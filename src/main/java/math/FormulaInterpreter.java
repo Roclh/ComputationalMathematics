@@ -1,11 +1,17 @@
 package math;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.chart.*;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
+import org.gillius.jfxutils.JFXUtil;
 import org.gillius.jfxutils.chart.ChartPanManager;
 import org.gillius.jfxutils.chart.JFXChartUtil;
+
+import java.util.ArrayList;
 
 
 public class FormulaInterpreter {
@@ -20,7 +26,19 @@ public class FormulaInterpreter {
         }else {
             return result;
         }
+    }
 
+    public static double calculate(String formula, double x, double y) throws NumberFormatException{
+        Expression calc = new ExpressionBuilder(formula)
+                .variables("x", "y")
+                .build()
+                .setVariable("x", x).setVariable("y", y);
+        double result = calc.evaluate();
+        if(Double.isNaN(result) || result == Double.POSITIVE_INFINITY|| result == Double.NEGATIVE_INFINITY){
+            throw new NumberFormatException("При вычислении получилось невозможное значение");
+        }else {
+            return result;
+        }
     }
 
     public static double calculateDerivative(String formula, double x, double accuracy, int depth){
@@ -83,6 +101,25 @@ public class FormulaInterpreter {
         return series;
     }
 
+    public static void populateChart(LineChart<Number, Number> chart, XYChart.Series<Number, Number> series){
+        chart.getData().add(series);
+    }
+
+    public static LineChart<Number, Number> buildGraph(ArrayList<? extends Number> xArray, ArrayList<? extends Number> yArray, String styleId, String seriesLabel) throws NumberFormatException{
+        LineChart<Number, Number> chart = getChart();
+        if(xArray.size()!=yArray.size()){
+            throw new NumberFormatException("Введенные массивы данных разных размеров: "+ xArray.size() +" и " + yArray.size());
+        }
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+        series.setName(seriesLabel);
+        chart.setId(styleId);
+        for(int i =0;i<xArray.size(); i++){
+            series.getData().add(new XYChart.Data<>(xArray.get(i), yArray.get(i)));
+        }
+        chart.getData().add(series);
+        return chart;
+    }
+
     public static BarChart<String, Number> getGist(){
         CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis();
@@ -101,7 +138,13 @@ public class FormulaInterpreter {
         LineChart<Number, Number> chart = new LineChart<>(xAxis, yAxis);
         chart.setStyle("-fx-stroke-width: 1px;");
         chart.setCreateSymbols(false);
+        chart.getXAxis().setAutoRanging( true );
+        chart.getYAxis().setAutoRanging( true );
+        chart.setAnimated( true );
+        chart.getXAxis().setAnimated( true );
+        chart.getYAxis().setAnimated( true );
         ChartPanManager panner = new ChartPanManager(chart);
+
         panner.setMouseFilter(event -> {
             if (event.getButton() == MouseButton.SECONDARY ||
                     (event.getButton() == MouseButton.PRIMARY &&
@@ -112,17 +155,6 @@ public class FormulaInterpreter {
             }
         });
         panner.start();
-
-
-        JFXChartUtil.setupZooming(chart, event -> {
-            if (event.getButton() != MouseButton.PRIMARY ||
-                    event.isShortcutDown()) {
-
-            } else {
-                event.consume();
-            }
-
-        });
 
         JFXChartUtil.addDoublePrimaryClickAutoRangeHandler(chart);
 

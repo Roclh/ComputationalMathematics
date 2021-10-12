@@ -36,6 +36,14 @@ public class ValueInput <T extends Number> extends TextField {
         this.notNegative = notNegative;
     }
 
+    public void setMinValue(T value){
+        this.min = value;
+    }
+
+    public void setMaxnValue(T value){
+        this.max = value;
+    }
+
     public int getInteger() throws NumberFormatException{
         checkBounds();
         return Integer.parseInt(getText());
@@ -56,8 +64,13 @@ public class ValueInput <T extends Number> extends TextField {
         if(this.notNegative){
             if(Double.parseDouble(this.getText())<0)throw new NumberFormatException("Поле не может быть отрицательным");
         }
-        if(this.min!=null&&this.max!=null){
-            if (this.min.doubleValue() >= Double.parseDouble(this.getText()) || Double.parseDouble(this.getText()) >= this.max.doubleValue()) {
+        if(this.min!=null){
+            if (this.min.doubleValue() >= Double.parseDouble(this.getText())) {
+                throw new NumberFormatException("Заданное число вышло за границы доступных чисел");
+            }
+        }
+        if(this.max!=null){
+            if(Double.parseDouble(this.getText()) >= this.max.doubleValue()){
                 throw new NumberFormatException("Заданное число вышло за границы доступных чисел");
             }
         }

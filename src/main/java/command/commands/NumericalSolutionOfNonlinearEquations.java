@@ -12,6 +12,7 @@ import math.RootConditions;
 import math.enums.NumericalSolutionOfNonlinearEquationsMethods;
 import math.excpetions.SecantMethodException;
 import nodes.*;
+import org.gillius.jfxutils.chart.JFXChartUtil;
 import services.AlertEjector;
 import services.History;
 
@@ -71,6 +72,7 @@ public class NumericalSolutionOfNonlinearEquations extends Command {
                             minValueInput.getDouble(),
                             maxValueInput.getDouble())
                     );
+                    JFXChartUtil.setupZooming(chart);
                     if (formulaInput.add()) {
                         formulaInput.save();
                     }

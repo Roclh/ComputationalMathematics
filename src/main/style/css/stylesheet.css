@@ -145,3 +145,21 @@
 #interpolation .default-color1.chart-legend-item-symbol{
     -fx-background-color: green;
 }
+
+#differentiation .default-color0.chart-series-line { -fx-stroke: green; }
+#differentiation .default-color1.chart-series-line { -fx-stroke: #AC3E3E; }
+
+#differentiation .default-color0.chart-line-symbol{
+    -fx-background-color: green transparent;
+}
+#differentiation .default-color1.chart-line-symbol{
+    -fx-background-color: #AC3E3E transparent;
+}
+
+#differentiation .default-color0.chart-legend-item-symbol{
+    -fx-background-color: #AC3E3E;
+}
+
+#differentiation .default-color1.chart-legend-item-symbol{
+    -fx-background-color: green;
+}
