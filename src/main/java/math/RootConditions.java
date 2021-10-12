@@ -28,7 +28,6 @@ public class RootConditions {
                 maxRoot = root;
             }
         }
-        System.out.println(maxRoot);
         return maxRoot;
     }
 

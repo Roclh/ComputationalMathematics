@@ -155,6 +155,7 @@ public class NumericalIntegrationLogics {
         int n = (int) Math.pow(
                         Math.abs(RootConditions.maxValue(function,min,max,accuracy, 4)*Math.pow(max-min, 5)/180/accuracy), 0.25d
         );
+        System.out.println(RootConditions.maxValue(function,min,max,accuracy, 4)*Math.pow(max-min, 5)/180/accuracy);
         if (n % 2 == 1) {
             n += 1;
         } else {

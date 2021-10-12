@@ -43,7 +43,7 @@ public class NumericalIntegration extends Command {
                                         .get()
                         );
                     }
-                    if (accuracyInput.getText().isEmpty()) {
+                    if (!accuracyInput.getText().isEmpty()) {
                         try {
                             flowPane.getChildren().add(NumericalIntegrationLogics.solve(
                                     formulaInput.getValue(),
