@@ -72,8 +72,8 @@ public class NumericalIntegrationLogics {
     }
 
     private static int chooseNRectangles(String function, double min, double max, double accuracy) {
-        int n = (int) Math.abs(
-                Math.sqrt(RootConditions.maxValueSecondDerivative(function, min, max, accuracy) * Math.pow(max - min, 3) / 24 / accuracy)
+        int n = (int) Math.sqrt(
+                Math.abs(RootConditions.maxValueSecondDerivative(function, min, max, accuracy) * Math.pow(max - min, 3) / 24 / accuracy)
         );
         if (n % 2 == 1) {
             n += 1;
@@ -109,9 +109,10 @@ public class NumericalIntegrationLogics {
     }
 
     private static int chooseNTrapezoid(String function, double min, double max, double accuracy) {
-        int n = (int) Math.abs(
-                Math.sqrt(RootConditions.maxValueSecondDerivative(function, min, max, accuracy) * Math.pow(max - min, 3) / 12 / accuracy)
+        int n = (int) Math.sqrt(
+                Math.abs(RootConditions.maxValueSecondDerivative(function, min, max, accuracy) * Math.pow(max - min, 3) / 12 / accuracy)
         );
+        System.out.println(RootConditions.maxValueSecondDerivative(function, min, max, accuracy));
         if (n % 2 == 1) {
             n += 1;
         } else {
@@ -129,12 +130,17 @@ public class NumericalIntegrationLogics {
         int n = chooseNSimpson(function,min,max,accuracy);
         double result = 0;
         double h = (max-min)/n;
-        for(int i =0; i<=n; i+=2){
-            double buf = (4*(FormulaInterpreter.calculate(function,min+h*i)))+(2*(FormulaInterpreter.calculate(function, min+h*(i+1))));
-            integralTableView.getItems().add(new IntegralTableRow(i/2, min+h*i, buf));
-            result+=buf;
+        double buf1= 0;
+        double buf2=0;
+        for(int i =0; i<=n; i++){
+            if((0<i&&i<n)&& i%2==1){
+                buf1+=FormulaInterpreter.calculate(function, min+h*i);
+            }else if ((0<i&&i<n-1)&& i%2==0){
+                buf2+=FormulaInterpreter.calculate(function, min+h*i);
+            }
+            integralTableView.getItems().add(new IntegralTableRow(i, min+h*i, FormulaInterpreter.calculate(function,min+h*i)));
         }
-        result = h/3*(result+FormulaInterpreter.calculate(function,max));
+        result = h/3*(FormulaInterpreter.calculate(function,max)+FormulaInterpreter.calculate(function,min) + 4*buf1 + 2*buf2);
         double inaccuracy = Math.abs(RootConditions.maxValue(function, min, max, accuracy, 4) * Math.pow(max - min, 5) / (180 * Math.pow(n, 4)));
         answer.add(integralTableView);
         answer.add(new ResultBoxLabel("Результаты метода Симпсона:" +
@@ -146,10 +152,9 @@ public class NumericalIntegrationLogics {
     }
 
     private static int chooseNSimpson(String function, double min, double max, double accuracy){
-        int n = (int) Math.abs(
-                Math.pow(RootConditions.maxValue(function,min,max,accuracy, 4)*Math.pow(max-min, 5)/180/accuracy, 0.25d)
+        int n = (int) Math.pow(
+                        Math.abs(RootConditions.maxValue(function,min,max,accuracy, 4)*Math.pow(max-min, 5)/180/accuracy), 0.25d
         );
-        System.out.println(RootConditions.maxValue(function,min,max,accuracy, 4));
         if (n % 2 == 1) {
             n += 1;
         } else {

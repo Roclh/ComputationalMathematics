@@ -10,9 +10,9 @@ public class RootConditions {
     }
 
     public static double maxValueSecondDerivative(String function, double min, double max, double step){
-        double maxRoot = 0;
+        double maxRoot = -999999999d;
         for(double i = min; i< max; i+=step){
-            double root = FormulaInterpreter.calculateSecondDerivative(function, i, step);
+            double root = FormulaInterpreter.calculateDerivative(function, i, step, 2);
             if(root>maxRoot){
                 maxRoot = root;
             }
@@ -21,7 +21,7 @@ public class RootConditions {
     }
 
     public static double maxValue(String function, double min, double max, double step, int depth){
-        double maxRoot = 0;
+        double maxRoot = Double.MIN_VALUE;
         for(double i = min; i< max; i+=step){
             double root = FormulaInterpreter.calculateDerivative(function, i, step, depth);
             if(root>maxRoot){
